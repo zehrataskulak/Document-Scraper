@@ -1,0 +1,56 @@
+void    copy_as_int(char *argv, int ***arr_final)
+{
+    int fd;
+    char *str;
+    char **arr_split;
+    int i;
+    int j;
+    
+    i = 0;
+    fd = open(argv, O_RDONLY);
+    str = get_next_line(fd);
+    while(str)
+    {
+        j = 0;
+        arr_split = ft_split(str, ' ');
+        while(arr_split[j] && arr_split[j][0] != '\n')
+        {
+            (*arr_final)[i][j] = ft_atoi(arr_split[j]);
+            j++;
+        }
+        j = 0;
+        while (arr_split[j])
+            free(arr_split[j++]);
+        free(arr_split);
+        free(str);
+        str = get_next_line(fd);
+        i++;
+    }
+    close(fd);
+}
+
+int    **read_map(char *argv)
+{
+    int y_len;
+    int x_len;
+    int **arr_final;
+    int i;
+
+    i = 0;
+    x_len = find_x(argv);
+    y_len = find_y(argv);
+    printf("x_len: %d, y_len:%d\n", x_len, y_len);
+
+    arr_final = malloc(sizeof(int *) * y_len);
+    if(!arr_final)
+        return(NULL);
+    while(i < y_len)
+    {
+        arr_final[i] = malloc(sizeof(int) * x_len);
+        if(!arr_final[i])
+            return (NULL);
+        i++;
+    }
+    copy_as_int(argv, &arr_final);
+    return (arr_final);
+}

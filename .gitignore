@@ -1,0 +1,13 @@
+# Python Derleme Dosyaları (Bytecode)
+__pycache__/
+models/__pycache__/
+scraper/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Yerel Sanal Ortam (Virtual Environment)
+venv/
+
+# Gizli Çevre Değişkenleri ve Veritabanı Şifreleri
+.env

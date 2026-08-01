@@ -1,0 +1,18 @@
+# Web Framework & Server
+fastapi
+uvicorn
+python-multipart
+
+# Document Parsing 
+pdfplumber
+python-docx
+
+# Database 
+sqlalchemy
+psycopg2-binary
+
+# Frontend / UI 
+jinja2
+
+# Configuration / Environment Variables
+python-dotenv
