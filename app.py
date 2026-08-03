@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from scraper.text_preprocessor import clean_text, get_text_metrics
 from database import init_db, Document, get_db
 
-from utils.document_helper import validate_file_format, validate_document_content
-from utils.document_helper import extract_text_by_type, save_uploaded_file, validate_file_size
+from utils.validate_document import validate_file_format, validate_document_content, validate_file_size
+from utils.document_helper import extract_text_by_type, save_uploaded_file
 
 app = FastAPI(title="Document Data Scraper")
 
@@ -85,7 +85,7 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
     except Exception as e:
         if os.path.exists(file_path):
             os.remove(file_path)
-        raise HTTPException(status_code=500, detail=f"Sistemsel bir hata oluştu: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"A system error occurred: {str(e)}")
 
 
 # Fetches all database records sorted by newest document first
