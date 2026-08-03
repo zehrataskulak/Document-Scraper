@@ -27,10 +27,10 @@ project/
 
 ## 🛠 Technologies Used
 
-- Backend: Python (FastAPI/Flask)
+- Backend: Python (FastAPI)
 - Database ORM: SQLAlchemy
 - Database Systems: PostgreSQL (Production) & SQLite (Local testing)
-- Document Parsing: PyPDF2 / pdfplumber, python-docx
+- Document Parsing: pdfplumber, python-docx
 - Preprocessing: Python standard 're' (Regex) module
 
 ---

@@ -17,13 +17,15 @@
             
             <form id="uploadForm" class="space-y-6">
                 <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 transition">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <label class="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 transition relative">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                             <svg class="w-8 h-8 mb-4 text-teal-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                             </svg>
                             <p class="mb-2 text-sm text-gray-300"><span class="font-semibold">Click to browse file</span></p>
                             <p class="text-xs text-gray-400">Supported types: PDF, DOCX, TXT</p>
+                            <!-- YENİ EKLENEN BOYUT UYARISI -->
+                            <p class="text-xs font-bold text-amber-500 mt-2 bg-amber-500/10 py-1 px-2 rounded">Maximum file size: 5 MB</p>
                         </div>
                         <input id="fileInput" type="file" accept=".pdf,.docx,.txt" class="hidden" required />
                     </label>
@@ -31,6 +33,7 @@
 
                 <div id="fileStatus" class="text-sm text-gray-400 hidden">
                     Selected File: <span id="fileName" class="text-teal-400 font-semibold"></span>
+                    <span id="fileSize" class="text-gray-500 ml-2 text-xs"></span>
                 </div>
 
                 <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-gray-950 font-bold py-3 px-4 rounded-lg transition shadow-lg">
@@ -78,9 +81,6 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-200 text-xl font-bold">&times;</button>
             </div>
             <div class="p-6 overflow-y-auto space-y-4">
-                <p class="text-xs text-gray-400 bg-gray-900 p-2 rounded border border-gray-700">
-                    ⏱️ <strong>Processing Time:</strong> <span id="modalProcTime" class="text-amber-400">0.0000s</span>
-                </p>
                 <h4 class="text-sm font-semibold text-gray-400">Extracted & Preprocessed Text:</h4>
                 <div id="modalText" class="bg-gray-900 p-4 rounded-lg text-gray-300 whitespace-pre-wrap text-sm border border-gray-800 leading-relaxed font-mono"></div>
             </div>
@@ -93,15 +93,25 @@
         const fileInput = document.getElementById('fileInput');
         const fileStatus = document.getElementById('fileStatus');
         const fileName = document.getElementById('fileName');
+        const fileSizeLabel = document.getElementById('fileSize');
+        
+        // MAKSİMUM BOYUT SABİTİ (5 MB)
+        const MAX_FILE_SIZE_MB = 5;
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
-                fileName.textContent = fileInput.files[0].name;
+                const file = fileInput.files[0];
+                fileName.textContent = file.name;
+                
+                // Dosya boyutunu MB cinsinden hesaplayıp ekranda gösterme
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                fileSizeLabel.textContent = `(${sizeInMB} MB)`;
+                
                 fileStatus.classList.remove('hidden');
             }
         });
 
-        // Pull down structural list logs matching app GET route
         async function fetchDocuments() {
             try {
                 const response = await fetch('/documents');
@@ -132,7 +142,6 @@
             }
         }
 
-        // Submits binary data stream straight into application upload pipeline logic
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const statusContainer = document.getElementById('statusContainer');
@@ -140,8 +149,18 @@
             
             if (fileInput.files.length === 0) return;
 
+            const file = fileInput.files[0];
+
+            // YENİ EKLENEN DOSYA BOYUTU KONTROLÜ
+            if (file.size > MAX_FILE_SIZE_BYTES) {
+                statusContainer.classList.remove('hidden');
+                statusText.className = 'text-sm font-medium text-rose-400';
+                statusText.textContent = `❌ Error: The file size exceeds the ${MAX_FILE_SIZE_MB} MB limit.`;
+                return; // Backend'e istek atılmasını engeller
+            }
+
             const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+            formData.append('file', file);
 
             statusContainer.classList.remove('hidden');
             statusText.className = 'text-sm font-medium text-amber-400 animate-pulse';
@@ -172,7 +191,6 @@
 
         function viewDetails(doc) {
             document.getElementById('modalTitle').textContent = `📄 ${doc.original_filename}`;
-            document.getElementById('modalProcTime').textContent = `${doc.processing_time || '0.0024'} seconds`;
             document.getElementById('modalText').textContent = doc.extracted_text;
             document.getElementById('detailModal').classList.remove('hidden');
         }

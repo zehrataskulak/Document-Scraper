@@ -1,9 +1,32 @@
 import re
+import unicodedata
+
+
+def _remove_control_characters(text: str) -> str:
+    if not text:
+        return ""
+    return re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+
+
+def unicode_normalization(raw_text: str) -> str:
+    # 1. Karakterleri web ve veritabanı standardı olan NFC formuna normalize et
+    normalized_text = unicodedata.normalize('NFC', raw_text)
+
+    # 2. Remove embedded NUL/control characters that break database inserts
+    sanitized_text = _remove_control_characters(normalized_text)
+
+    # 3. Diğer temizlik işlemlerini yap (boşlukları silme vb.)
+    cleaned_text = sanitized_text.strip()
+
+    return cleaned_text
+
 
 def clean_text(text: str) -> str:
     if not text:
         return ""
-    
+
+    text = _remove_control_characters(text)
+
     # Standardize line breaks and tabs
     text = text.replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
     

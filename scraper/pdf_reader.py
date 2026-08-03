@@ -1,4 +1,5 @@
 import pdfplumber
+from .text_preprocessor import unicode_normalization
 
 def extract_text_from_pdf(file_path: str) -> str:
     try:
@@ -10,7 +11,13 @@ def extract_text_from_pdf(file_path: str) -> str:
                 if text:
                     extracted_text.append(text)
 
-        return "\n".join(extracted_text).strip()
+        raw_text = "\n".join(extracted_text)
+
+        # 2. Elde ettiğimiz bu tek parça string metni normalize ediyoruz
+        final_text = unicode_normalization(raw_text)
+        
+        # 3. Sonundaki ve başındaki gereksiz boşlukları kırpıp döndürüyoruz
+        return final_text.strip()
 
     except Exception as e:
         print(f"An error occurred while reading the PDF file: {e}")
