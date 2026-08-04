@@ -35,27 +35,22 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
 
     validate_file_size(file, max_size_mb=5)
 
-    # 1. Dosyayı geçici/kalıcı klasöre kaydet
+    # Save the file to the temporary/permanent folder.
     file_path = await save_uploaded_file(file, UPLOAD_DIR)
     
     try:
-        # 2. Uzantıyı ve Gerçek Dosya Yapısını (Sahtecilik Kontrolü) Doğrula
         file_ext = validate_file_format(file_path, file.filename)
         
-        # 3. Metni dökümandan kazı
         text_read = extract_text_by_type(file_path, file_ext)
         
-        # 4. Metni temizle
         extracted_text = clean_text(text_read)
         
-        # 5. Boş döküman kontrolünü gerçekleştir
         validated_text = validate_document_content(extracted_text, file.filename)
         
-        # 6. Metrikleri hesapla
         metrics = get_text_metrics(validated_text)
         word_count, character_count = metrics["word_count"], metrics["character_count"]
+
         
-        # 7. Veritabanı modelini oluştur ve kaydet
         new_document = Document(
             original_filename=file.filename,
             file_type=file_ext,
@@ -78,7 +73,7 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
         }
         
     except HTTPException as http_exc:
-        # Eğer validasyonlarda bir hata çıktıysa diske yazılan hatalı/boş dosyayı temizle
+        # If an error occurs during validation, delete the erroneous or empty file written to the disk.
         if os.path.exists(file_path):
             os.remove(file_path)
         raise http_exc

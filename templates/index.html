@@ -24,10 +24,10 @@
                             </svg>
                             <p class="mb-2 text-sm text-gray-300"><span class="font-semibold">Click to browse file</span></p>
                             <p class="text-xs text-gray-400">Supported types: PDF, DOCX, TXT</p>
-                            <!-- YENİ EKLENEN BOYUT UYARISI -->
+                            <!-- SIZE WARNING -->
                             <p class="text-xs font-bold text-amber-500 mt-2 bg-amber-500/10 py-1 px-2 rounded">Maximum file size: 5 MB</p>
                         </div>
-                        <input id="fileInput" type="file" accept=".pdf,.docx,.txt" class="hidden" required />
+                        <input id="fileInput" type="file" accept="*/*" class="hidden" required />
                     </label>
                 </div>
 
@@ -95,7 +95,7 @@
         const fileName = document.getElementById('fileName');
         const fileSizeLabel = document.getElementById('fileSize');
         
-        // MAKSİMUM BOYUT SABİTİ (5 MB)
+        // MAXIMUM SIZE LIMIT (5 MB)
         const MAX_FILE_SIZE_MB = 5;
         const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
@@ -104,7 +104,7 @@
                 const file = fileInput.files[0];
                 fileName.textContent = file.name;
                 
-                // Dosya boyutunu MB cinsinden hesaplayıp ekranda gösterme
+                // Calculating the file size in MB and displaying it on the screen
                 const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
                 fileSizeLabel.textContent = `(${sizeInMB} MB)`;
                 
@@ -151,12 +151,12 @@
 
             const file = fileInput.files[0];
 
-            // YENİ EKLENEN DOSYA BOYUTU KONTROLÜ
+            // FILE SIZE CHECK
             if (file.size > MAX_FILE_SIZE_BYTES) {
                 statusContainer.classList.remove('hidden');
                 statusText.className = 'text-sm font-medium text-rose-400';
                 statusText.textContent = `❌ Error: The file size exceeds the ${MAX_FILE_SIZE_MB} MB limit.`;
-                return; // Backend'e istek atılmasını engeller
+                return;
             }
 
             const formData = new FormData();

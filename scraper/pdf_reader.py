@@ -13,10 +13,8 @@ def extract_text_from_pdf(file_path: str) -> str:
 
         raw_text = "\n".join(extracted_text)
 
-        # 2. Elde ettiğimiz bu tek parça string metni normalize ediyoruz
         final_text = unicode_normalization(raw_text)
-        
-        # 3. Sonundaki ve başındaki gereksiz boşlukları kırpıp döndürüyoruz
+
         return final_text.strip()
 
     except Exception as e:
