@@ -17,9 +17,12 @@ project/
 │   ├── docx_reader.py        # DOCX text extraction
 │   ├── pdf_reader.py         # PDF text extraction
 │   ├── txt_reader.py         # Plain TXT extraction
+│   ├── extract_and_save.py   # Runs functions
 │   └── text_preprocessor.py  # Data cleaning and normalization
 ├── templates/                # HTML frontend layout
 ├── uploads/                  # Sample testing documents
+├── utils/
+│   └── validate_document.py  # Validates document requirements
 ├── requirements.txt          # Project dependencies
 └── README.md                 # Project documentation
 

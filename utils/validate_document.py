@@ -1,7 +1,6 @@
 import os
 import magic
 from fastapi import HTTPException, UploadFile, status
-from models.document import Document
 
 ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 ALLOWED_MIME_TYPES = {

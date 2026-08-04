@@ -6,10 +6,11 @@ from fastapi.requests import Request
 from sqlalchemy.orm import Session
 
 from scraper.text_preprocessor import clean_text, get_text_metrics
+from scraper.extract_and_save import extract_text_by_type, save_uploaded_file
 from database import init_db, Document, get_db
 
 from utils.validate_document import validate_file_format, validate_document_content, validate_file_size
-from utils.document_helper import extract_text_by_type, save_uploaded_file
+
 
 app = FastAPI(title="Document Data Scraper")
 

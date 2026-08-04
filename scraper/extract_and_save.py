@@ -1,6 +1,5 @@
 import os
 from fastapi import UploadFile
-from models.document import Document
 
 from scraper.pdf_reader import extract_text_from_pdf
 from scraper.docx_reader import extract_text_from_docx
